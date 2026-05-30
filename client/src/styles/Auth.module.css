@@ -1,0 +1,170 @@
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.visualPattern {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(184,146,74,0.12) 0%, transparent 70%);
+}
+.visualContent {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 60px 48px;
+}
+.visualTitle {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 5vw, 72px);
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+.visualTitle em { font-style: italic; color: var(--gold-light); display: block; }
+.visualSub {
+  font-size: 16px;
+  color: rgba(250,247,242,0.5);
+  font-weight: 300;
+  line-height: 1.85;
+}
+.formWrap {
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+  border-left: 1px solid var(--border);
+}
+.formInner { width: 100%; max-width: 420px; }
+.formLogo {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+.formLogoSub {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 48px;
+}
+.formTitle {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.formSub {
+  font-size: 15px;
+  color: var(--text-muted);
+  font-weight: 300;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+.formLink { color: var(--gold); font-weight: 500; transition: color 0.3s; }
+.formLink:hover { color: var(--gold-dark); }
+.error {
+  background: var(--mehron-pale);
+  border: 1px solid rgba(107,35,54,0.2);
+  border-left: 3px solid var(--mehron);
+  color: var(--mehron);
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.form { display: flex; flex-direction: column; gap: 28px; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.label {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.input {
+  background: var(--bg-alt);
+  border: 1.5px solid var(--border);
+  padding: 14px 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+}
+.input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,146,74,0.1);
+  background: var(--surface);
+}
+.input::placeholder { color: var(--text-muted); }
+.submitBtn {
+  background: var(--gold);
+  color: #FFFFFF;
+  border: none;
+  padding: 18px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+  cursor: none;
+  transition: background 0.3s;
+  margin-top: 8px;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+.submitBtn:hover { background: var(--gold-dark); }
+.submitBtn:disabled { opacity: 0.55; }
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.divider span {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  font-weight: 300;
+}
+.homeLink {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+  transition: color 0.3s;
+  margin-top: 16px;
+  font-family: var(--font-body);
+}
+.homeLink:hover { color: var(--gold); }
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .visual { min-height: 32vh; }
+  .formWrap { padding: 48px 24px 60px; border-left: none; border-top: 1px solid var(--border); }
+}

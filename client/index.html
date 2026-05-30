@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AEVUM — By Azka Shahid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <body>
+
+  <!-- Your whole website content -->
+
+
+
+  <!-- CUSTOM CURSOR SCRIPT -->
+  <script>
+    const cursorDot = document.createElement("div");
+    const cursorOutline = document.createElement("div");
+
+    cursorDot.classList.add("cursor-dot");
+    cursorOutline.classList.add("cursor-outline");
+
+    document.body.appendChild(cursorDot);
+    document.body.appendChild(cursorOutline);
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let outlineX = 0;
+    let outlineY = 0;
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      cursorDot.style.left = `${mouseX}px`;
+      cursorDot.style.top = `${mouseY}px`;
+    });
+
+    function animateCursor() {
+      outlineX += (mouseX - outlineX) * 0.15;
+      outlineY += (mouseY - outlineY) * 0.15;
+
+      cursorOutline.style.left = `${outlineX}px`;
+      cursorOutline.style.top = `${outlineY}px`;
+
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    const hoverItems = document.querySelectorAll(
+      "a, button, .btn-primary, .btn-outline, .btn-dark"
+    );
+
+    hoverItems.forEach((item) => {
+      item.addEventListener("mouseenter", () => {
+        document.body.classList.add("cursor-hover");
+      });
+
+      item.addEventListener("mouseleave", () => {
+        document.body.classList.remove("cursor-hover");
+      });
+    });
+  </script>
+
+</body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

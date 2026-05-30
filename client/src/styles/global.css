@@ -1,0 +1,395 @@
+/* ────────────────────────────────────────────
+   RESET
+───────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ────────────────────────────────────────────
+   ROOT VARIABLES
+───────────────────────────────────────────── */
+:root {
+  --bg:           #FAF7F2;
+  --bg-alt:       #F3EDE3;
+  --bg-dark:      #1C1712;
+  --surface:      #FFFFFF;
+  --surface-warm: #FDF9F4;
+
+  --gold:         #B8924A;
+  --gold-light:   #D4AF7A;
+  --gold-pale:    #F0E4CC;
+  --gold-dark:    #8A6B32;
+
+  --text-primary:   #1C1712;
+  --text-secondary: #3D3830;
+  --text-muted:     #7A7060;
+  --text-on-dark:   #FAF7F2;
+
+  --olive:        #4A5C38;
+  --olive-mid:    #5C7048;
+  --olive-light:  #7A9060;
+  --olive-pale:   #EEF2E8;
+
+  --mehron:       #6B2336;
+  --mehron-mid:   #882D44;
+  --mehron-light: #AA4060;
+  --mehron-pale:  #F5E8EC;
+
+  --border:       rgba(28,23,18,0.1);
+  --border-gold:  rgba(184,146,74,0.3);
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body:    'Jost', sans-serif;
+
+  --shadow-sm: 0 2px 12px rgba(28,23,18,0.06);
+  --shadow-md: 0 6px 28px rgba(28,23,18,0.1);
+  --shadow-lg: 0 12px 48px rgba(28,23,18,0.15);
+}
+
+/* ────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
+}
+
+/* Hide default cursor */
+*, *::before, *::after {
+  cursor: none !important;
+}
+
+/* Restore default cursor on mobile */
+@media (max-width: 768px) {
+  *,
+  *::before,
+  *::after {
+    cursor: auto !important;
+  }
+
+  body {
+    cursor: auto;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+/* ────────────────────────────────────────────
+   LUXURY GOLD CUSTOM CURSOR
+───────────────────────────────────────────── */
+
+.cursor-dot,
+.cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+}
+
+/* Smooth animations */
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  box-shadow: 0 0 14px rgba(184,146,74,0.9);
+  transition:
+    transform 0.15s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+}
+
+.cursor-outline {
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid rgba(184,146,74,0.65);
+  background: rgba(184,146,74,0.08);
+  backdrop-filter: blur(4px);
+
+  box-shadow:
+    0 0 20px rgba(184,146,74,0.18),
+    inset 0 0 12px rgba(184,146,74,0.12);
+
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    transform 0.12s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Hover effect */
+.cursor-hover .cursor-outline {
+  width: 70px;
+  height: 70px;
+  background: rgba(184,146,74,0.14);
+  border-color: var(--gold);
+}
+
+.cursor-hover .cursor-dot {
+  transform: translate(-50%, -50%) scale(0.7);
+}
+
+/* Hide custom cursor on mobile */
+@media (max-width: 768px) {
+  .cursor-dot,
+  .cursor-outline {
+    display: none;
+  }
+}
+
+/* ────────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────────── */
+
+.btn-primary {
+  background: var(--gold);
+  color: #FFFFFF;
+  padding: 16px 44px;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border: none;
+  font-weight: 500;
+  display: inline-block;
+  transition: background 0.3s;
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--gold-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  padding: 15px 44px;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border: 1.5px solid var(--gold);
+  font-weight: 500;
+  display: inline-block;
+  transition: all 0.3s;
+  font-family: var(--font-body);
+}
+
+.btn-outline:hover {
+  background: var(--gold);
+  color: #FFFFFF;
+}
+
+.btn-dark {
+  background: var(--bg-dark);
+  color: var(--text-on-dark);
+  padding: 16px 44px;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border: none;
+  font-weight: 500;
+  display: inline-block;
+  transition: background 0.3s;
+  font-family: var(--font-body);
+}
+
+.btn-dark:hover {
+  background: var(--gold);
+  color: #FFFFFF;
+}
+
+/* ────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────── */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-48px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeUpStagger {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineGrow {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 48px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ────────────────────────────────────────────
+   SCROLL REVEAL
+───────────────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none !important;
+}
+
+.reveal-up {
+  transform: translateY(40px);
+}
+
+.reveal-left {
+  transform: translateX(-48px);
+}
+
+.reveal-right {
+  transform: translateX(48px);
+}
+
+.reveal-scale {
+  transform: scale(0.93);
+}
+
+.reveal-fade {
+  transform: none;
+}
+
+/* Delays */
+
+.delay-1 {
+  transition-delay: 0.1s;
+}
+
+.delay-2 {
+  transition-delay: 0.2s;
+}
+
+.delay-3 {
+  transition-delay: 0.3s;
+}
+
+.delay-4 {
+  transition-delay: 0.4s;
+}
+
+.delay-5 {
+  transition-delay: 0.5s;
+}
+
+.delay-6 {
+  transition-delay: 0.6s;
+}
