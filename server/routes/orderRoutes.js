@@ -20,11 +20,7 @@ const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp']
 
 const upload = multer({
   storage: multer.memoryStorage(),
-<<<<<<< HEAD
-  limits: { fileSize: 5 * 1024 * 1024, files: 1, fields: 20, fieldSize: 64 * 1024, parts: 30 }, // 5MB max
-=======
-  limits: { fileSize: 4 * 1024 * 1024, files: 1, fields: 20, fieldSize: 64 * 1024, parts: 30 }, // 4MB max (Vercel limits requests to ~4.5MB)
->>>>>>> 1fc1e36 (Vercel serverless backend)
+  limits: { fileSize: 4 * 1024 * 1024, files: 1, fields: 20, fieldSize: 64 * 1024, parts: 30 }, // 4MB max for Vercel
   fileFilter: (req, file, cb) => {
     if (ALLOWED_MIME.includes(file.mimetype)) return cb(null, true)
     const err = new Error('Only JPG, PNG or WebP images are allowed')
