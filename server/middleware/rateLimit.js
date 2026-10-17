@@ -169,4 +169,3 @@ module.exports = {
     max: 120
   })
 }
-EOF
