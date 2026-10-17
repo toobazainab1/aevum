@@ -304,7 +304,7 @@ export default function Checkout() {
                         <>
                           <div style={s.uploadIcon}>📎</div>
                           <p style={s.uploadText}>Tap to upload payment screenshot</p>
-                          <p style={s.uploadSub}>JPG, PNG or WebP · Max 5MB</p>
+                          <p style={s.uploadSub}>JPG, PNG or WebP · Max 4MB</p>
                         </>
                       )}
                       <input

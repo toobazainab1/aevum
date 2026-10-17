@@ -71,7 +71,7 @@ export default function Home() {
 
   useEffect(() => {
     axios.get(`${API}/products`)
-      .then(res => setProducts(res.data))
+      .then(res => setProducts(Array.isArray(res.data) ? res.data : []))
       .catch(console.error)
   }, [])
 

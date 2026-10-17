@@ -33,6 +33,10 @@
 
 ## Known limits
 - JWT is kept in localStorage (as before). The CSP and XSS fixes reduce the risk; httpOnly cookies are the next step.
+<<<<<<< HEAD
 - Rate limiting is in-memory (fine for one server instance).
+=======
+- Rate limiting for login, sign-up and orders is stored in MongoDB (shared across serverless instances); broad/admin limits are per-instance.
+>>>>>>> 1fc1e36 (Vercel serverless backend)
 - Payment screenshots: with `CLOUDINARY_URL` set they are stored as private (authenticated) Cloudinary assets and only streamed to the order owner/admin by the API. Without it they are saved on local disk, which is wiped on free hosts. Run `node scripts/testCloudinary.js` after setting it.
 - Stock is not decremented on orders and sale discounts are not applied server-side (pre-existing behaviour).

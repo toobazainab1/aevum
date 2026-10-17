@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -73,6 +74,15 @@ process.on('unhandledRejection', (reason) => {
 
 mongoose.set('strictQuery', true)
 mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000, maxPoolSize: 10 })
+=======
+// Entry point for local development and always-on hosts (Render, Railway, VPS...).
+// On Vercel the app is loaded through api/index.js instead.
+const config = require('./config/env')
+const app = require('./app')
+const { connectDB } = require('./config/db')
+
+connectDB()
+>>>>>>> 1fc1e36 (Vercel serverless backend)
   .then(() => {
     console.log('MongoDB connected')
     app.listen(config.port, () => {

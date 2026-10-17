@@ -238,7 +238,7 @@ const updateOrderStatus = async (req, res) => {
 
     // Auto-send email on key status changes
     if (EMAIL_TRIGGER_STATUSES.includes(status) && order.user?.email) {
-      sendOrderEmail({
+      await sendOrderEmail({
         to:              order.user.email,
         customerName:    order.user.name,
         orderId:         order._id.toString(),

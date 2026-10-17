@@ -53,6 +53,10 @@ async function saveImage(buffer, mime) {
   const cfg = cloudConfig()
 
   if (!cfg) {
+<<<<<<< HEAD
+=======
+    if (process.env.VERCEL) throw new Error('CLOUDINARY_URL is not set: payment screenshots cannot be stored on Vercel without it')
+>>>>>>> 1fc1e36 (Vercel serverless backend)
     await fs.promises.mkdir(UPLOAD_DIR, { recursive: true, mode: 0o700 })
     const file = `${name}${type.ext}`
     await fs.promises.writeFile(path.join(UPLOAD_DIR, file), buffer, { mode: 0o600 })

@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+=======
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
+>>>>>>> 1fc1e36 (Vercel serverless backend)
   "headers": [
     {
       "source": "/(.*)",
