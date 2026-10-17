@@ -1,4 +1,4 @@
-cat > client/src/api.js <<'EOF'
+
 import axios from 'axios'
 
 const fromEnv = import.meta.env.VITE_API_URL
