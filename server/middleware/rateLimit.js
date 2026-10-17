@@ -1,4 +1,3 @@
-cat > server/middleware/rateLimit.js <<'EOF'
 const mongoose = require('mongoose')
 
 const MAX_KEYS = 100000
