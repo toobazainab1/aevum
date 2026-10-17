@@ -1,24 +1,41 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
-const dotenv = require('dotenv')
-const path = require('path')
 
-dotenv.config()
+// Validates env vars first; exits if config is unsafe/missing
+const config = require('./config/env')
+const securityHeaders = require('./middleware/securityHeaders')
+const { sanitizeRequest } = require('./middleware/sanitize')
+const { globalLimiter } = require('./middleware/rateLimit')
 
 const app = express()
 
+app.disable('x-powered-by')
+app.set('trust proxy', config.trustProxy)
+
+app.use(securityHeaders)
+
+// ── CORS: only the origins listed in CLIENT_ORIGINS may call the API from a browser ──
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://aevum-ashy.vercel.app'
-  ],
-  credentials: true
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true)                       // curl / server-to-server / same-origin
+    cb(null, config.clientOrigins.includes(origin))          // unknown origins get no CORS headers
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false,                                        // auth uses a Bearer token, not cookies
+  maxAge: 600,
 }))
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+// ── Body parsing with small size limits ──
+app.use(express.json({ limit: '20kb' }))
+app.use(express.urlencoded({ extended: false, limit: '20kb' }))
+app.use(sanitizeRequest)                                     // strips $operators / dotted keys / __proto__
+
+app.use('/api', globalLimiter)
+
+// NOTE: /uploads is intentionally NOT served statically any more.
+// Payment screenshots are private and only available via GET /api/orders/:id/screenshot.
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'))
@@ -27,26 +44,42 @@ app.use('/api/orders', require('./routes/orderRoutes'))
 app.use('/api/sales', require('./routes/saleRoutes'))
 
 app.get('/', (req, res) => {
-  res.json({ message: 'AEVUM API running ✨' })
+  res.json({ message: 'AEVUM API running' })
 })
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' })
 })
 
+// ── Central error handler: never leaks stack traces or internal messages ──
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).json({ message: err.message || 'Internal Server Error' })
+  if (err.type === 'entity.too.large') return res.status(413).json({ message: 'Request too large' })
+  if (err.type === 'entity.parse.failed') return res.status(400).json({ message: 'Invalid JSON' })
+  if (err.name === 'MulterError') {
+    const msg = err.code === 'LIMIT_FILE_SIZE' ? 'Image must be 5MB or smaller' : 'Invalid upload'
+    return res.status(400).json({ message: msg })
+  }
+  if (err.expose && err.status >= 400 && err.status < 500) {
+    return res.status(err.status).json({ message: err.message })
+  }
+  console.error('Unhandled error:', config.isProd ? err.message : err.stack)
+  res.status(500).json({ message: 'Internal Server Error' })
 })
 
-mongoose.connect(process.env.MONGO_URI)
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason && reason.message ? reason.message : reason)
+})
+
+mongoose.set('strictQuery', true)
+mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000, maxPoolSize: 10 })
   .then(() => {
-    console.log('✅ MongoDB connected')
-    app.listen(process.env.PORT || 5000, () => {
-      console.log(`🚀 Server running`)
+    console.log('MongoDB connected')
+    app.listen(config.port, () => {
+      console.log(`Server running on port ${config.port} (${config.isProd ? 'production' : 'development'})`)
     })
   })
   .catch(err => {
-    console.error('❌ MongoDB connection failed:', err.message)
+    console.error('MongoDB connection failed:', err.message)
     process.exit(1)
   })

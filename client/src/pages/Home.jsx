@@ -2,8 +2,11 @@ import { Link } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import styles from '../styles/Home.module.css'
+import ProductImageSlider from '../components/ProductImageSlider'
+import PerfumeCutout from '../components/PerfumeCutout'
+import { getProductImages } from '../utils/perfumeImages'
+import { API } from '../api'
 
-const API = 'http://localhost:5000/api'
 
 function BottleSVG({ name, color, size = 200 }) {
   return (
@@ -77,10 +80,8 @@ export default function Home() {
   const herProducts = products.filter(p => p.filterKey === 'her').slice(0, 2)
 
   // Hero bottle names — use first him/her product or fallback
-  const heroHimName = himProducts[0]?.name || 'Nox'
-  const heroHerName = herProducts[0]?.name || 'Roza'
-  const heroHimColor = himProducts[0]?.bottleColor || '#2d4a2d'
-  const heroHerColor = herProducts[0]?.bottleColor || '#5a1e2e'
+
+  const worldH = 'clamp(190px, 30vw, 270px)'
 
   return (
     <main style={{ background: 'var(--navy)' }}>
@@ -100,16 +101,6 @@ export default function Home() {
           <div className={styles.heroCta}>
             <Link to="/products" className="btn-primary">Discover Collection</Link>
             <Link to="/about" className="btn-outline">Our Story</Link>
-          </div>
-        </div>
-        <div className={styles.heroVisuals}>
-          <div className={styles.heroBottleLeft} style={{ animationDelay: '0s' }}>
-            <BottleSVG name={heroHimName} color={heroHimColor} size={180} />
-            <p className={styles.heroBottleLabel} style={{ color: 'var(--olive-light)' }}>For Him</p>
-          </div>
-          <div className={styles.heroBottleRight} style={{ animationDelay: '1s' }}>
-            <BottleSVG name={heroHerName} color={heroHerColor} size={180} />
-            <p className={styles.heroBottleLabel} style={{ color: 'var(--mehron-light)' }}>For Her</p>
           </div>
         </div>
         <div className={styles.heroScroll}>
@@ -147,26 +138,14 @@ export default function Home() {
             </Link>
           </div>
           <div className={styles.worldBottles}>
-            {himProducts.length > 0 ? himProducts.map((p, i) => (
+            {himProducts.map((p, i) => (
               <div key={p._id} style={{ animation: `float 6s ease-in-out ${i * 1.2}s infinite` }}>
-                <BottleSVG name={p.name} color={p.bottleColor} size={140} />
-                <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--olive-light)', letterSpacing: '0.15em', marginTop: 8 }}>
+                <PerfumeCutout name={p.name} height={worldH} />
+                <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--olive-light)', letterSpacing: '0.15em', marginTop: 14 }}>
                   {p.name.toUpperCase()}
                 </p>
               </div>
-            )) : (
-              // Fallback while loading
-              <>
-                <div style={{ animation: 'float 6s ease-in-out infinite' }}>
-                  <BottleSVG name="Nox" color="#2d4a2d" size={140} />
-                  <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--olive-light)', letterSpacing: '0.15em', marginTop: 8 }}>NOX</p>
-                </div>
-                <div style={{ animation: 'float 6s ease-in-out 1.2s infinite' }}>
-                  <BottleSVG name="Verdis" color="#3a5030" size={140} />
-                  <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--olive-light)', letterSpacing: '0.15em', marginTop: 8 }}>VERDIS</p>
-                </div>
-              </>
-            )}
+            ))}
           </div>
         </div>
 
@@ -181,25 +160,14 @@ export default function Home() {
             </Link>
           </div>
           <div className={styles.worldBottles}>
-            {herProducts.length > 0 ? herProducts.map((p, i) => (
+            {herProducts.map((p, i) => (
               <div key={p._id} style={{ animation: `float 6s ease-in-out ${i * 1.3 + 0.5}s infinite` }}>
-                <BottleSVG name={p.name} color={p.bottleColor} size={140} />
-                <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--mehron-light)', letterSpacing: '0.15em', marginTop: 8 }}>
+                <PerfumeCutout name={p.name} height={worldH} />
+                <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--mehron-light)', letterSpacing: '0.15em', marginTop: 14 }}>
                   {p.name.toUpperCase()}
                 </p>
               </div>
-            )) : (
-              <>
-                <div style={{ animation: 'float 6s ease-in-out 0.5s infinite' }}>
-                  <BottleSVG name="Roza" color="#5a1e2e" size={140} />
-                  <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--mehron-light)', letterSpacing: '0.15em', marginTop: 8 }}>ROZA</p>
-                </div>
-                <div style={{ animation: 'float 6s ease-in-out 1.8s infinite' }}>
-                  <BottleSVG name="Velour" color="#6b2030" size={140} />
-                  <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--mehron-light)', letterSpacing: '0.15em', marginTop: 8 }}>VELOUR</p>
-                </div>
-              </>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -229,9 +197,17 @@ export default function Home() {
                 className={`${styles.collCard} reveal reveal-up`}
                 style={{ background: p.bg, transitionDelay: `${(i % 4) * 0.1}s` }}
               >
-                <div className={styles.collBottle} style={{ animation: 'float 6s ease-in-out infinite' }}>
-                  <BottleSVG name={p.name} color={p.bottleColor} size={160} />
-                </div>
+                {getProductImages(p.name).length > 0 ? (
+                  <div className={styles.collBottle} style={{ padding: 0, minHeight: 0, aspectRatio: '4 / 5', display: 'block' }}>
+                    <Link to={`/products/${p._id}`} aria-label={`View ${p.name}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                      <ProductImageSlider name={p.name} />
+                    </Link>
+                  </div>
+                ) : (
+                  <div className={styles.collBottle} style={{ animation: 'float 6s ease-in-out infinite' }}>
+                    <BottleSVG name={p.name} color={p.bottleColor} size={160} />
+                  </div>
+                )}
                 {p.badge && (
                   <span className={styles.collBadge} style={{
                     background: p.filterKey === 'him' ? 'var(--olive)' : 'var(--mehron)',

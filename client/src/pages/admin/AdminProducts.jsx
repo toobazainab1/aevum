@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { API } from '../../api'
 
-const API = 'http://localhost:5000/api'
 
 const EMPTY_FORM = {
   name: '', tagline: '', description: '', category: '',
@@ -107,10 +107,10 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <div style={s.topBar}>
+      <div className="adm-topbar" style={s.topBar}>
         <div>
           <p style={s.eyebrow}>AEVUM · Admin</p>
-          <h1 style={s.pageTitle}>Products</h1>
+          <h1 className="adm-title" style={s.pageTitle}>Products</h1>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           {/* Seed Button */}
@@ -131,14 +131,14 @@ export default function AdminProducts() {
         </div>
       </div>
 
-      <div style={s.tableWrap}>
-        <div style={{ ...s.row, ...s.headerRow }}>
+      <div className="adm-table" style={s.tableWrap}>
+        <div className="adm-head" style={{ ...s.row, ...s.headerRow }}>
           <span>Product</span><span>Category</span><span>Price</span>
           <span>Stock</span><span>Status</span><span>Actions</span>
         </div>
         {products.length === 0 && <div style={s.empty}>No products yet. Seed or add one!</div>}
         {products.map(p => (
-          <div key={p._id} style={s.row}>
+          <div key={p._id} className="adm-row adm-r-products" style={s.row}>
             <div style={s.productCell}>
               <div style={{ ...s.colorDot, background: p.bottleColor }} />
               <div>
@@ -170,8 +170,8 @@ export default function AdminProducts() {
 
       {/* Add / Edit Modal */}
       {modal && (
-        <div style={s.overlay} onClick={() => setModal(null)}>
-          <div style={s.modalBox} onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" style={s.overlay} onClick={() => setModal(null)}>
+          <div className="adm-modal" style={s.modalBox} onClick={e => e.stopPropagation()}>
             <div style={s.modalHead}>
               <h2 style={s.modalTitle}>{modal === 'add' ? 'Add New Product' : `Edit — ${form.name}`}</h2>
               <button style={s.closeBtn} onClick={() => setModal(null)}>✕</button>
@@ -179,7 +179,7 @@ export default function AdminProducts() {
 
             {error && <div style={s.errorBox}>{error}</div>}
 
-            <div style={s.formGrid}>
+            <div className="adm-formgrid" style={s.formGrid}>
               {[
                 { label: 'Name',                    name: 'name',        placeholder: 'Aurum' },
                 { label: 'Tagline',                 name: 'tagline',     placeholder: 'The Gold Standard' },
@@ -250,8 +250,8 @@ export default function AdminProducts() {
 
       {/* Delete Confirm */}
       {deleteId && (
-        <div style={s.overlay} onClick={() => setDeleteId(null)}>
-          <div style={{ ...s.modalBox, maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" style={s.overlay} onClick={() => setDeleteId(null)}>
+          <div className="adm-modal" style={{ ...s.modalBox, maxWidth: 420 }} onClick={e => e.stopPropagation()}>
             <h2 style={s.modalTitle}>Remove Product?</h2>
             <p style={{ color: 'rgba(245,240,230,0.45)', fontSize: 13, margin: '16px 0 28px' }}>
               This will hide the product from the store. Existing orders are preserved.

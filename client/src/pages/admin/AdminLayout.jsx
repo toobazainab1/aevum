@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import '../../styles/admin.css'
 
 const NAV = [
   { to: '/admin',          label: 'Dashboard',  icon: '◈' },
@@ -11,10 +12,35 @@ const NAV = [
 ]
 
 export default function AdminLayout() {
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
   const location = useLocation()
   const navigate  = useNavigate()
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsedPref, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 900px)')
+    const onChange = (e) => { setIsMobile(e.matches); if (!e.matches) setMobileOpen(false) }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  // close the drawer when navigating
+  useEffect(() => { setMobileOpen(false) }, [location.pathname])
+
+  // lock page scroll while the drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
+
+  // the drawer always shows full labels; "collapsed" only applies on desktop
+  const collapsed = collapsedPref && !isMobile
+
+  if (loading) return null
 
   if (!user || user.role !== 'admin') {
     return (
@@ -29,9 +55,19 @@ export default function AdminLayout() {
   const handleLogout = () => { logout(); navigate('/') }
 
   return (
-    <div style={{ ...s.shell, gridTemplateColumns: collapsed ? '72px 1fr' : '240px 1fr' }}>
+    <div className="adm-shell" style={{ ...s.shell, gridTemplateColumns: collapsed ? '72px 1fr' : '240px 1fr' }}>
+      {/* ── Mobile top bar ── */}
+      <header className="adm-mobilebar">
+        <button className="adm-burger" aria-label="Open menu" aria-expanded={mobileOpen} onClick={() => setMobileOpen(o => !o)}>
+          <span /><span /><span />
+        </button>
+        <span className="adm-mobilebrand">AEVUM</span>
+        <span className="adm-mobilesub">Admin</span>
+      </header>
+      <div className={`adm-backdrop${mobileOpen ? ' adm-open' : ''}`} onClick={() => setMobileOpen(false)} />
+
       {/* ── Sidebar ── */}
-      <aside style={s.sidebar}>
+      <aside className={`adm-sidebar${mobileOpen ? ' adm-open' : ''}`} style={s.sidebar}>
         <div style={s.sideTop}>
           <div style={s.brand}>
             {!collapsed && (
@@ -40,7 +76,7 @@ export default function AdminLayout() {
                 <div style={s.brandSub}>Admin Panel</div>
               </div>
             )}
-            <button style={s.collapseBtn} onClick={() => setCollapsed(c => !c)}>
+            <button className="adm-collapse" style={s.collapseBtn} onClick={() => setCollapsed(c => !c)}>
               {collapsed ? '›' : '‹'}
             </button>
           </div>
@@ -89,7 +125,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* ── Main Content ── */}
-      <main style={s.main}>
+      <main className="adm-main" style={s.main}>
         <Outlet />
       </main>
     </div>

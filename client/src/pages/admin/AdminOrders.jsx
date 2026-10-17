@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { API } from '../../api'
+import SecureImage from '../../components/SecureImage'
 
-const API = 'http://localhost:5000/api'
 
 const STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
 
@@ -94,17 +95,17 @@ export default function AdminOrders() {
 
   return (
     <div style={{ fontFamily: "'Jost', sans-serif" }}>
-      <div style={s.topBar}>
+      <div className="adm-topbar" style={s.topBar}>
         <div>
           <p style={s.eyebrow}>AEVUM · Admin</p>
-          <h1 style={s.pageTitle}>Orders</h1>
+          <h1 className="adm-title" style={s.pageTitle}>Orders</h1>
           {pendingVerification > 0 && (
             <div style={s.verifyAlert}>
               ⚠ {pendingVerification} order{pendingVerification !== 1 ? 's' : ''} awaiting payment verification
             </div>
           )}
         </div>
-        <div style={s.filterRow}>
+        <div className="adm-filters" style={s.filterRow}>
           {['all', ...STATUSES].map(st => (
             <button
               key={st}
@@ -117,8 +118,8 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      <div style={s.tableWrap}>
-        <div style={{ ...s.row, ...s.headerRow }}>
+      <div className="adm-table" style={s.tableWrap}>
+        <div className="adm-head" style={{ ...s.row, ...s.headerRow }}>
           <span>Order ID</span>
           <span>Customer</span>
           <span>Payment</span>
@@ -132,7 +133,7 @@ export default function AdminOrders() {
           const sc = STATUS_COLORS[order.status] || STATUS_COLORS.pending
           const needsVerify = (order.paymentMethod === 'easypaisa' || order.paymentMethod === 'jazzcash') && !order.paymentConfirmed
           return (
-            <div key={order._id} style={{ ...s.row, cursor: 'pointer' }} onClick={() => openOrder(order)}>
+            <div key={order._id} className="adm-row adm-r-orders" style={{ ...s.row, cursor: 'pointer' }} onClick={() => openOrder(order)}>
               <span style={s.orderId}>#{order._id.slice(-6).toUpperCase()}</span>
               <div>
                 <div style={s.customerName}>{order.user?.name || '—'}</div>
@@ -163,8 +164,8 @@ export default function AdminOrders() {
 
       {/* ── Order Detail Modal ── */}
       {selected && (
-        <div style={s.overlay} onClick={() => setSelected(null)}>
-          <div style={s.modalBox} onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" style={s.overlay} onClick={() => setSelected(null)}>
+          <div className="adm-modal" style={s.modalBox} onClick={e => e.stopPropagation()}>
 
             {/* Header */}
             <div style={s.modalHead}>
@@ -176,7 +177,7 @@ export default function AdminOrders() {
             </div>
 
             {/* Info grid */}
-            <div style={s.modalGrid}>
+            <div className="adm-modalgrid" style={s.modalGrid}>
               <div style={s.infoBlock}>
                 <p style={s.infoLabel}>Customer</p>
                 <p style={s.infoVal}>{selected.user?.name || '—'}</p>
@@ -245,8 +246,9 @@ export default function AdminOrders() {
                   <div>
                     <p style={{ ...s.infoLabel, marginBottom: 10 }}>Payment Screenshot</p>
                     <div style={s.screenshotWrap} onClick={() => setScreenshotOpen(true)}>
-                      <img
-                        src={`http://localhost:5000${selected.paymentScreenshot}`}
+                      <SecureImage
+                        orderId={selected._id}
+                        token={token}
                         alt="Payment screenshot"
                         style={s.screenshotThumb}
                       />
@@ -267,7 +269,7 @@ export default function AdminOrders() {
             <div style={s.itemsSection}>
               <p style={s.infoLabel}>Order Items</p>
               {selected.items?.map((item, i) => (
-                <div key={i} style={s.orderItem}>
+                <div key={i} className="adm-itemrow" style={s.orderItem}>
                   <div style={{ ...s.colorDot, background: item.bottleColor || '#3d5c30' }} />
                   <div style={{ flex: 1 }}>
                     <span style={s.itemName}>{item.name}</span>
@@ -328,8 +330,9 @@ export default function AdminOrders() {
         <div style={s.lightbox} onClick={() => setScreenshotOpen(false)}>
           <div style={s.lightboxInner} onClick={e => e.stopPropagation()}>
             <button style={s.lightboxClose} onClick={() => setScreenshotOpen(false)}>✕ Close</button>
-            <img
-              src={`http://localhost:5000${selected.paymentScreenshot}`}
+            <SecureImage
+              orderId={selected._id}
+              token={token}
               alt="Payment proof"
               style={s.lightboxImg}
             />

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { API } from '../../api'
 
-const API = 'http://localhost:5000/api'
 
 export default function AdminUsers() {
   const { token } = useAuth()
@@ -26,13 +26,13 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <div style={s.topBar}>
+      <div className="adm-topbar" style={s.topBar}>
         <div>
           <p style={s.eyebrow}>AEVUM · Admin</p>
-          <h1 style={s.pageTitle}>Users</h1>
+          <h1 className="adm-title" style={s.pageTitle}>Users</h1>
         </div>
         <input
-          style={s.search}
+          className="adm-search" style={s.search}
           placeholder="Search by name or email..."
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -40,7 +40,7 @@ export default function AdminUsers() {
       </div>
 
       {/* Summary */}
-      <div style={s.summary}>
+      <div className="adm-summary" style={s.summary}>
         <div style={s.summaryCard}>
           <div style={s.summaryVal}>{users.length}</div>
           <div style={s.summaryLabel}>Total Users</div>
@@ -63,13 +63,13 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      <div style={s.tableWrap}>
-        <div style={{ ...s.row, ...s.headerRow }}>
+      <div className="adm-table" style={s.tableWrap}>
+        <div className="adm-head" style={{ ...s.row, ...s.headerRow }}>
           <span>User</span><span>Email</span><span>Role</span><span>Joined</span>
         </div>
         {filtered.length === 0 && <div style={s.empty}>No users found.</div>}
         {filtered.map(user => (
-          <div key={user._id} style={s.row}>
+          <div key={user._id} className="adm-row adm-r-users" style={s.row}>
             <div style={s.userCell}>
               <div style={s.avatar}>{user.name.charAt(0).toUpperCase()}</div>
               <span style={s.userName}>{user.name}</span>

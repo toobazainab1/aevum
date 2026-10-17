@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import styles from '../styles/Auth.module.css'
+import { API } from '../api'
 
 export default function Login() {
   const { login } = useAuth()
@@ -20,7 +21,7 @@ export default function Login() {
     setLoading(true)
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        `${API}/auth/login`,
         form
       )
       login(res.data.user, res.data.token)

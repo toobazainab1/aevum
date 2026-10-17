@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom'
 
 export default function Footer() {
   return (
-    <footer style={{
+    <footer className="ft-root" style={{
       background: 'var(--bg-dark)',
       padding: '80px 60px 40px',
       borderTop: '2px solid var(--border-gold)',
     }}>
 
-      <div style={{
+      <div className="ft-grid" style={{
         display: 'grid',
         gridTemplateColumns: '2fr 1fr 1fr 1fr',
         gap: '60px',

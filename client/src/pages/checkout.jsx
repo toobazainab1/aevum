@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { API } from '../api'
 
-const API = 'http://localhost:5000/api'
 
 const PROVINCES = [
   'Punjab','Sindh','Khyber Pakhtunkhwa','Balochistan',
@@ -203,12 +203,12 @@ export default function Checkout() {
   // ── CHECKOUT FORM ────────────────────────────────────────────
   return (
     <main style={s.page}>
-      <header style={s.header}>
+      <header className="co-header" style={s.header}>
         <Link to="/" style={s.headerLogo}>
           <span style={s.headerLogoText}>AEVUM</span>
           <span style={s.headerLogoSub}>By Azka Shahid</span>
         </Link>
-        <div style={s.steps}>
+        <div className="co-steps" style={s.steps}>
           {['Shipping', 'Review', 'Confirm'].map((label, i) => (
             <div key={label} style={s.stepWrap}>
               <div style={{ ...s.stepNum, ...(i <= step ? s.stepNumActive : {}) }}>
@@ -222,17 +222,17 @@ export default function Checkout() {
         <Link to="/cart" style={s.backLink}>← Back to Cart</Link>
       </header>
 
-      <div style={s.layout}>
+      <div className="co-layout" style={s.layout}>
         <div style={s.left}>
           {error && <div style={s.errorBox}>{error}</div>}
 
           {/* STEP 0: Shipping + Payment */}
           {step === 0 && (
-            <div style={s.card}>
+            <div className="co-card" style={s.card}>
               <h2 style={s.cardTitle}>Shipping Details</h2>
               <p style={s.cardSub}>Where should we deliver your order?</p>
 
-              <div style={s.formGrid}>
+              <div className="co-formgrid" style={s.formGrid}>
                 <Field label="Full Name *"      name="fullName"   value={form.fullName}   onChange={handleChange} placeholder="As on ID" span />
                 <Field label="Email Address *"  name="email"      value={form.email}      onChange={handleChange} placeholder="for order updates" type="email" span />
                 <Field label="Phone Number *"   name="phone"      value={form.phone}      onChange={handleChange} placeholder="03xx-xxxxxxx" type="tel" />
@@ -331,7 +331,7 @@ export default function Checkout() {
 
           {/* STEP 1: Review */}
           {step === 1 && (
-            <div style={s.card}>
+            <div className="co-card" style={s.card}>
               <h2 style={s.cardTitle}>Review Your Order</h2>
               <p style={s.cardSub}>Please confirm everything looks correct</p>
 
@@ -394,7 +394,7 @@ export default function Checkout() {
 
         {/* ── RIGHT: Summary ── */}
         <div style={s.right}>
-          <div style={s.summaryCard}>
+          <div className="co-summary" style={s.summaryCard}>
             <h3 style={s.summaryTitle}>Order Summary</h3>
             {cartItems.map(item => (
               <div key={`${item._id}-${item.size}`} style={s.summaryItem}>

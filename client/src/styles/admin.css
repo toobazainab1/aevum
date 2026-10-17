@@ -1,0 +1,199 @@
+/* ─────────────────────────────────────────────────────────────
+   ADMIN PANEL — responsive layer
+   The admin pages are styled inline, so these rules use class
+   hooks (adm-*) and !important to override at smaller screens.
+   Desktop (> 900px) is unchanged.
+───────────────────────────────────────────────────────────── */
+
+/* Mobile-only pieces are hidden on desktop */
+.adm-mobilebar,
+.adm-backdrop { display: none; }
+
+.adm-main { min-width: 0; }
+.adm-main * { box-sizing: border-box; }
+
+/* ── Small laptops / tablets landscape ── */
+@media (max-width: 1100px) {
+  .adm-main { padding: 40px 28px !important; }
+  .adm-grid4 { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── Tablets & phones ── */
+@media (max-width: 900px) {
+  /* shell: sidebar becomes an off-canvas drawer */
+  .adm-shell { display: block !important; }
+
+  .adm-sidebar {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: min(290px, 84vw) !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow-y: auto !important;
+    transform: translateX(-102%);
+    transition: transform 0.3s ease !important;
+    z-index: 1002;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  }
+  .adm-sidebar.adm-open { transform: translateX(0); }
+  .adm-collapse { display: none !important; }
+
+  .adm-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 1001;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .adm-backdrop.adm-open { opacity: 1; pointer-events: auto; }
+
+  /* fixed top bar with hamburger */
+  .adm-mobilebar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    height: calc(56px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 16px 0;
+    background: rgba(17,17,17,0.96);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(201,169,110,0.15);
+  }
+  .adm-burger {
+    width: 40px; height: 40px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    background: none; border: 1px solid rgba(201,169,110,0.25); border-radius: 8px;
+    cursor: pointer; padding: 0;
+  }
+  .adm-burger span { display: block; width: 18px; height: 1.5px; background: #C9A96E; }
+  .adm-mobilebrand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600; letter-spacing: 0.3em; color: #C9A96E;
+  }
+  .adm-mobilesub {
+    margin-left: auto;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(245,240,230,0.35);
+  }
+
+  .adm-main {
+    padding: calc(56px + env(safe-area-inset-top, 0px) + 22px) 16px 48px !important;
+    min-height: 100vh;
+    overflow-x: hidden !important;
+  }
+
+  /* headings / page top bars */
+  .adm-title { font-size: 28px !important; line-height: 1.15 !important; }
+  .adm-topbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    margin-bottom: 22px !important;
+  }
+  .adm-topbar > div, .adm-topbar > button { max-width: 100%; }
+  .adm-topbar button { min-height: 44px; }
+  .adm-search { width: 100% !important; min-width: 0 !important; }
+  .adm-filters { gap: 8px !important; }
+  .adm-filters button { min-height: 38px; }
+
+  /* cards / summaries */
+  .adm-grid4 { gap: 12px !important; }
+  .adm-grid4 > div { padding: 18px 16px !important; }
+  .adm-summary { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .adm-alerthead, .adm-banner { flex-wrap: wrap !important; gap: 12px !important; }
+  .adm-banner button { width: 100%; min-height: 44px; }
+
+  /* ── tables turn into stacked cards ── */
+  .adm-head { display: none !important; }
+  .adm-table { border-radius: 12px; overflow: hidden; }
+  .adm-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px 16px !important;
+    padding: 16px !important;
+    align-items: start !important;
+  }
+  .adm-row > * { min-width: 0; overflow-wrap: anywhere; }
+  .adm-row > *::before {
+    display: block;
+    margin-bottom: 3px;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(245,240,230,0.35);
+  }
+  .adm-row select { width: 100% !important; min-height: 42px; }
+  .adm-row button { min-height: 40px; }
+
+  /* dashboard: Order · Customer · Total · Date · Status */
+  .adm-r-dash > :nth-child(1)::before { content: 'Order'; }
+  .adm-r-dash > :nth-child(2)::before { content: 'Customer'; }
+  .adm-r-dash > :nth-child(3)::before { content: 'Total'; }
+  .adm-r-dash > :nth-child(4)::before { content: 'Date'; }
+  .adm-r-dash > :nth-child(5)::before { content: 'Status'; }
+
+  /* products: Product · Category · Price · Stock · Status · Actions */
+  .adm-r-products > :nth-child(1) { grid-column: 1 / -1; }
+  .adm-r-products > :nth-child(2)::before { content: 'Category'; }
+  .adm-r-products > :nth-child(3)::before { content: 'Price'; }
+  .adm-r-products > :nth-child(4)::before { content: 'Stock'; }
+  .adm-r-products > :nth-child(5)::before { content: 'Status'; }
+  .adm-r-products > :nth-child(6) { grid-column: 1 / -1; }
+  .adm-r-products > :nth-child(6) button { flex: 1; }
+
+  /* orders: ID · Customer · Payment · Total · Date · Status · Action */
+  .adm-r-orders > :nth-child(1)::before { content: 'Order'; }
+  .adm-r-orders > :nth-child(2)::before { content: 'Customer'; }
+  .adm-r-orders > :nth-child(3)::before { content: 'Payment'; }
+  .adm-r-orders > :nth-child(4)::before { content: 'Total'; }
+  .adm-r-orders > :nth-child(5)::before { content: 'Date'; }
+  .adm-r-orders > :nth-child(6)::before { content: 'Status'; }
+  .adm-r-orders > :nth-child(7) { grid-column: 1 / -1; }
+  .adm-r-orders > :nth-child(7)::before { content: 'Change status'; }
+
+  /* sales: Name · Type · Discount · Applies · Status · Actions */
+  .adm-r-sales > :nth-child(1) { grid-column: 1 / -1; }
+  .adm-r-sales > :nth-child(2)::before { content: 'Type'; }
+  .adm-r-sales > :nth-child(3)::before { content: 'Discount'; }
+  .adm-r-sales > :nth-child(4)::before { content: 'Applies to'; }
+  .adm-r-sales > :nth-child(5)::before { content: 'Status'; }
+  .adm-r-sales > :nth-child(6) { grid-column: 1 / -1; }
+  .adm-r-sales > :nth-child(6) button { flex: 1; }
+
+  /* users: User · Email · Role · Joined */
+  .adm-r-users > :nth-child(1) { grid-column: 1 / -1; }
+  .adm-r-users > :nth-child(2) { grid-column: 1 / -1; }
+  .adm-r-users > :nth-child(2)::before { content: 'Email'; }
+  .adm-r-users > :nth-child(3)::before { content: 'Role'; }
+  .adm-r-users > :nth-child(4)::before { content: 'Joined'; }
+
+  /* ── modals ── */
+  .adm-overlay { padding: 10px !important; align-items: flex-end !important; }
+  .adm-modal {
+    padding: 20px 16px !important;
+    max-height: 94vh !important;
+    max-height: 94dvh !important;
+    overflow-y: auto !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+  }
+  .adm-formgrid, .adm-modalgrid { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .adm-formgrid > * { grid-column: auto !important; }
+  .adm-itemrow { flex-wrap: wrap !important; gap: 8px 12px !important; }
+
+  /* iOS zooms the page when a focused input is under 16px */
+  .adm-main input,
+  .adm-main select,
+  .adm-main textarea { font-size: 16px !important; }
+}
+
+/* ── Small phones ── */
+@media (max-width: 480px) {
+  .adm-grid4 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .adm-grid4 > div { padding: 14px 12px !important; }
+  .adm-title { font-size: 25px !important; }
+  .adm-modal { padding: 18px 14px !important; }
+}

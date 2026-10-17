@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
+import { API } from '../../api'
 
-const API = 'http://localhost:5000/api'
 
 const EMPTY = { name: '', discountType: 'percentage', discountValue: '', appliesTo: 'all', startsAt: '', endsAt: '' }
 
@@ -56,10 +56,10 @@ export default function AdminSales() {
 
   return (
     <div>
-      <div style={s.topBar}>
+      <div className="adm-topbar" style={s.topBar}>
         <div>
           <p style={s.eyebrow}>AEVUM · Admin</p>
-          <h1 style={s.pageTitle}>Sales & Discounts</h1>
+          <h1 className="adm-title" style={s.pageTitle}>Sales & Discounts</h1>
         </div>
         <button style={s.addBtn} onClick={() => { setForm(EMPTY); setError(''); setModal(true) }}>
           + Create Sale
@@ -68,7 +68,7 @@ export default function AdminSales() {
 
       {/* Active Sale Banner */}
       {activeSale && (
-        <div style={s.activeBanner}>
+        <div className="adm-banner" style={s.activeBanner}>
           <div style={s.activeDot} />
           <div style={{ flex: 1 }}>
             <p style={s.activeName}>🏷 Active Sale: {activeSale.name}</p>
@@ -86,8 +86,8 @@ export default function AdminSales() {
       )}
 
       {/* Sales Table */}
-      <div style={s.tableWrap}>
-        <div style={{ ...s.row, ...s.headerRow }}>
+      <div className="adm-table" style={s.tableWrap}>
+        <div className="adm-head" style={{ ...s.row, ...s.headerRow }}>
           <span>Sale Name</span><span>Type</span><span>Discount</span>
           <span>Applies To</span><span>Status</span><span>Actions</span>
         </div>
@@ -95,7 +95,7 @@ export default function AdminSales() {
           <div style={s.empty}>No sales created yet. Create one to start a promotion!</div>
         )}
         {sales.map(sale => (
-          <div key={sale._id} style={s.row}>
+          <div key={sale._id} className="adm-row adm-r-sales" style={s.row}>
             <div>
               <p style={s.saleName}>{sale.name}</p>
               {sale.startsAt && (
@@ -148,8 +148,8 @@ export default function AdminSales() {
 
       {/* Create Modal */}
       {modal && (
-        <div style={s.overlay} onClick={() => setModal(false)}>
-          <div style={s.modalBox} onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" style={s.overlay} onClick={() => setModal(false)}>
+          <div className="adm-modal" style={s.modalBox} onClick={e => e.stopPropagation()}>
             <div style={s.modalHead}>
               <h2 style={s.modalTitle}>Create New Sale</h2>
               <button style={s.closeBtn} onClick={() => setModal(false)}>✕</button>
@@ -157,7 +157,7 @@ export default function AdminSales() {
 
             {error && <div style={s.errorBox}>{error}</div>}
 
-            <div style={s.formGrid}>
+            <div className="adm-formgrid" style={s.formGrid}>
               <label style={{ ...s.field, gridColumn: '1 / -1' }}>
                 <span style={s.fieldLabel}>Sale Name *</span>
                 <input style={s.input} name="name" value={form.name} onChange={handleChange} placeholder='e.g. "Eid Special" or "Summer Sale"' />

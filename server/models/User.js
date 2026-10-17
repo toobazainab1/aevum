@@ -1,12 +1,15 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
+const BCRYPT_ROUNDS = 12
+
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: [true, 'Name is required'],
       trim: true,
+      maxlength: [60, 'Name is too long'],
     },
     email: {
       type: String,
@@ -14,12 +17,14 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      maxlength: [254, 'Email is too long'],
       match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email'],
     },
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters'],
+      minlength: [8, 'Password must be at least 8 characters'],
+      select: false, // never returned by queries unless explicitly requested
     },
     role: {
       type: String,
@@ -33,14 +38,17 @@ const userSchema = new mongoose.Schema(
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next()
-  const salt = await bcrypt.genSalt(10)
-  this.password = await bcrypt.hash(this.password, salt)
-  next()
+  try {
+    const salt = await bcrypt.genSalt(BCRYPT_ROUNDS)
+    this.password = await bcrypt.hash(this.password, salt)
+    next()
+  } catch (err) { next(err) }
 })
 
-// Compare password method
+// Requires the document to have been loaded with .select('+password')
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password)
+  if (!this.password) return false
+  return bcrypt.compare(enteredPassword, this.password)
 }
 
 // Never send password to client
@@ -49,5 +57,7 @@ userSchema.methods.toJSON = function () {
   delete obj.password
   return obj
 }
+
+userSchema.statics.BCRYPT_ROUNDS = BCRYPT_ROUNDS
 
 module.exports = mongoose.model('User', userSchema)
