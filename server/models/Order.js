@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       enum: ['cod', 'easypaisa', 'jazzcash'],
-      default: 'cod',
+      default: 'easypaisa',
     },
 
     // Screenshot upload path (for easypaisa/jazzcash)

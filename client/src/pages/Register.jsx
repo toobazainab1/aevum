@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 import styles from '../styles/Auth.module.css'
+import { API } from '../api'
 
 export default function Register() {
   const { login } = useAuth()
@@ -20,7 +21,7 @@ export default function Register() {
     setLoading(true)
     try {
       const res = await axios.post(
-        'http://localhost:5000/api/auth/register',
+        `${API}/auth/register`,
         form
       )
       login(res.data.user, res.data.token)
@@ -170,9 +171,10 @@ export default function Register() {
                 value={form.password}
                 onChange={handleChange}
                 className={styles.input}
-                placeholder="Minimum 6 characters"
+                placeholder="Minimum 8 characters, with a letter and a number"
                 required
-                minLength={6}
+                minLength={8}
+                maxLength={72}
               />
             </div>
 

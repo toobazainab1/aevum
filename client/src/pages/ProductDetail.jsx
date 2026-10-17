@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import axios from 'axios'
 import styles from '../styles/ProductDetail.module.css'
+import ProductImageSlider from '../components/ProductImageSlider'
+import { getProductImages } from '../utils/perfumeImages'
+import { API } from '../api'
 
-const API = 'http://localhost:5000/api'
 
 function BottleSVG({ name, color, size = 260 }) {
   return (
@@ -84,13 +86,22 @@ export default function ProductDetail() {
         }}>
           {product.gender} · AEVUM
         </div>
-        <div className={styles.visualInner} style={{
-          animation: 'float 6s ease-in-out infinite',
-          background: accentBg, borderRadius: '32px',
-          padding: '50px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-        }}>
-          <BottleSVG name={product.name} color={product.bottleColor} size={280} />
-        </div>
+        {getProductImages(product.name).length > 0 ? (
+          <div className={styles.visualInner} style={{
+            height: 'min(84%, 640px)', aspectRatio: '4 / 5', borderRadius: '24px',
+            overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+          }}>
+            <ProductImageSlider name={product.name} radius={24} />
+          </div>
+        ) : (
+          <div className={styles.visualInner} style={{
+            animation: 'float 6s ease-in-out infinite',
+            background: accentBg, borderRadius: '32px',
+            padding: '50px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+          }}>
+            <BottleSVG name={product.name} color={product.bottleColor} size={280} />
+          </div>
+        )}
       </div>
 
       {/* Info side */}

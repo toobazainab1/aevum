@@ -1,44 +1,51 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const User = require('../models/User')
+const { jwtSecret, jwtExpiresIn, jwtIssuer, jwtAudience } = require('../config/env')
+const { cleanText, isEmail, passwordProblem } = require('../utils/validate')
 
-// Helper: generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' })
-}
+const generateToken = (id) =>
+  jwt.sign({ id }, jwtSecret, {
+    algorithm: 'HS256',
+    expiresIn: jwtExpiresIn,
+    issuer: jwtIssuer,
+    audience: jwtAudience,
+  })
+
+// Used to keep login timing the same whether or not the email exists
+let dummyHash
+const getDummyHash = () => (dummyHash ||= bcrypt.hashSync('aevum-dummy-password-1', User.BCRYPT_ROUNDS))
+
+const publicUser = (u) => ({ _id: u._id, name: u.name, email: u.email, role: u.role })
 
 // ─── POST /api/auth/register ──────────────────────────────────
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body
+    const name  = cleanText(req.body.name, 60)
+    const email = cleanText(req.body.email, 254).toLowerCase()
+    const password = req.body.password
 
-    // Validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' })
     }
-    if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' })
-    }
+    if (name.length < 2) return res.status(400).json({ message: 'Please enter your full name' })
+    if (!isEmail(email)) return res.status(400).json({ message: 'Please enter a valid email' })
+    const pwProblem = passwordProblem(password, email)
+    if (pwProblem) return res.status(400).json({ message: pwProblem })
 
-    // Check duplicate email
-    const existing = await User.findOne({ email })
-    if (existing) {
+    if (await User.findOne({ email })) {
       return res.status(400).json({ message: 'An account with this email already exists' })
     }
 
-    // Create user (password hashed by pre-save hook in model)
-    const user = await User.create({ name, email, password })
+    // role is never taken from the request: new accounts are always plain users
+    const user = await User.create({ name, email, password, role: 'user' })
 
-    res.status(201).json({
-      user: {
-        _id:   user._id,
-        name:  user.name,
-        email: user.email,
-        role:  user.role,
-      },
-      token: generateToken(user._id),
-    })
+    res.status(201).json({ user: publicUser(user), token: generateToken(user._id) })
   } catch (error) {
-    console.error('Register error:', error)
+    if (error && error.code === 11000) {
+      return res.status(400).json({ message: 'An account with this email already exists' })
+    }
+    console.error('Register error:', error.message)
     res.status(500).json({ message: 'Server error during registration' })
   }
 }
@@ -46,56 +53,45 @@ const register = async (req, res) => {
 // ─── POST /api/auth/login ─────────────────────────────────────
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase().slice(0, 254) : ''
+    const password = typeof req.body.password === 'string' ? req.body.password.slice(0, 200) : ''
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' })
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).select('+password')
     if (!user) {
+      await bcrypt.compare(password, getDummyHash()) // equalise timing
       return res.status(401).json({ message: 'Invalid email or password' })
     }
 
-    const isMatch = await user.matchPassword(password)
-    if (!isMatch) {
+    if (!(await user.matchPassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
 
-    res.json({
-      user: {
-        _id:   user._id,
-        name:  user.name,
-        email: user.email,
-        role:  user.role,
-      },
-      token: generateToken(user._id),
-    })
+    // Upgrade older, weaker hashes (cost < 12) transparently on successful login
+    if (bcrypt.getRounds(user.password) < User.BCRYPT_ROUNDS) {
+      const upgraded = await bcrypt.hash(password, User.BCRYPT_ROUNDS)
+      await User.updateOne({ _id: user._id }, { $set: { password: upgraded } })
+    }
+
+    res.json({ user: publicUser(user), token: generateToken(user._id) })
   } catch (error) {
-    console.error('Login error:', error)
+    console.error('Login error:', error.message)
     res.status(500).json({ message: 'Server error during login' })
   }
 }
 
 // ─── GET /api/auth/me  (protected) ───────────────────────────
 const getMe = async (req, res) => {
-  try {
-    // req.user is set by protect middleware
-    res.json({
-      _id:   req.user._id,
-      name:  req.user.name,
-      email: req.user.email,
-      role:  req.user.role,
-    })
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' })
-  }
+  res.json(publicUser(req.user))
 }
 
 // ─── GET /api/auth/users  (admin only) ───────────────────────
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password').sort({ createdAt: -1 })
+    const users = await User.find().select('-password').sort({ createdAt: -1 }).limit(2000)
     res.json(users)
   } catch (error) {
     res.status(500).json({ message: 'Server error' })

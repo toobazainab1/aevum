@@ -6,6 +6,8 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   overflow: hidden;
   background: var(--bg-dark);
   padding: 120px 60px 80px;
@@ -19,7 +21,10 @@
 }
 .heroContent {
   position: relative; z-index: 2;
-  max-width: 580px;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center;
   animation: fadeUp 1.2s ease 0.2s both;
 }
 .heroEyebrow {
@@ -32,8 +37,10 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  justify-content: center;
 }
-.heroEyebrow::before {
+.heroEyebrow::before,
+.heroEyebrow::after {
   content: '';
   width: 32px; height: 1px;
   background: var(--gold-light);
@@ -54,11 +61,11 @@
   line-height: 1.9;
   color: rgba(250,247,242,0.6);
   font-weight: 300;
-  max-width: 440px;
-  margin-bottom: 52px;
+  max-width: 520px;
+  margin: 0 auto 52px;
   letter-spacing: 0.01em;
 }
-.heroCta { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.heroCta { display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .heroVisuals {
   position: absolute;
   right: 60px; top: 0; bottom: 0;
@@ -90,7 +97,8 @@
 }
 .heroScroll {
   position: absolute;
-  bottom: 40px; left: 60px;
+  bottom: 40px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
   font-size: 11px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -544,8 +552,11 @@
 .newsletterNote { font-size: 14px; color: var(--text-muted); font-weight: 300; }
 
 @media (max-width: 900px) {
-  .hero { padding: 100px 24px 60px; min-height: auto; }
-  .heroVisuals { position: relative; right: auto; top: auto; bottom: auto; justify-content: center; margin-top: 40px; gap: 24px; flex-wrap: wrap; }
+  .hero { padding: 110px 24px 70px; min-height: 100svh; }
+  .heroEyebrow { font-size: 10px; letter-spacing: 0.3em; gap: 10px; margin-bottom: 22px; }
+  .heroEyebrow::before, .heroEyebrow::after { width: 18px; }
+  .heroSub { font-size: 15px; line-height: 1.8; margin-bottom: 36px; }
+  .heroTitle { font-size: clamp(46px, 14vw, 72px); margin-bottom: 24px; }
   .heroScroll { display: none; }
   .worldHim, .worldHer { flex-direction: column; padding: 56px 24px; min-height: auto; gap: 32px; }
   .worldHim::after, .worldHer::after { display: none; }
@@ -562,4 +573,7 @@
   .collectionGrid { grid-template-columns: 1fr; }
   .heroCta { flex-direction: column; width: 100%; }
   .heroCta a, .heroCta button { text-align: center; width: 100%; }
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .collectionGrid { grid-template-columns: repeat(2, 1fr); }
 }

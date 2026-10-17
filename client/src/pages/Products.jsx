@@ -3,8 +3,10 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import axios from 'axios'
 import styles from '../styles/Products.module.css'
+import ProductImageSlider from '../components/ProductImageSlider'
+import { getProductImages } from '../utils/perfumeImages'
+import { API } from '../api'
 
-const API = 'http://localhost:5000/api'
 
 const tabs = [
   { label: 'All Fragrances', value: 'all' },
@@ -34,6 +36,7 @@ function BottleSVG({ name, color, size = 130 }) {
 function ProductCard({ product }) {
   const { addToCart } = useCart()
   const [added, setAdded] = useState(false)
+  const hasPhotos = getProductImages(product.name).length > 0
   const isHim = product.filterKey === 'him'
   const accentColor = isHim ? 'var(--olive)' : 'var(--mehron)'
   const accentLight = isHim ? 'var(--olive-light)' : 'var(--mehron-light)'
@@ -46,15 +49,24 @@ function ProductCard({ product }) {
 
   return (
     <div className={styles.card}>
-      <div className={styles.cardTop} style={{ background: product.bg }}>
+      <div
+        className={styles.cardTop}
+        style={hasPhotos ? { background: product.bg, padding: 0, aspectRatio: '4 / 5', display: 'block' } : { background: product.bg }}
+      >
         {product.badge && (
           <span className={styles.badge} style={{ background: accentColor }}>
             {product.badge}
           </span>
         )}
-        <div className={styles.cardBottle} style={{ animation: 'float 6s ease-in-out infinite' }}>
-          <BottleSVG name={product.name} color={product.bottleColor} size={140} />
-        </div>
+        {hasPhotos ? (
+          <Link to={`/products/${product._id}`} aria-label={`View ${product.name}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+            <ProductImageSlider name={product.name} />
+          </Link>
+        ) : (
+          <div className={styles.cardBottle} style={{ animation: 'float 6s ease-in-out infinite' }}>
+            <BottleSVG name={product.name} color={product.bottleColor} size={140} />
+          </div>
+        )}
       </div>
 
       <div className={styles.cardInfo}>

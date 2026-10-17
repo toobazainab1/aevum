@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { API } from '../api'
 
-const API = 'http://localhost:5000/api'
 
 const PROVINCES = [
   'Punjab','Sindh','Khyber Pakhtunkhwa','Balochistan',
@@ -13,14 +13,11 @@ const PROVINCES = [
 
 // ── Payment account details ──────────────────────────────────
 const PAYMENT_ACCOUNTS = {
-  easypaisa: { number: '0300-0000000', name: 'Azka Shahid', color: '#4CAF50', label: 'EasyPaisa' },
-  jazzcash:  { number: '0300-0000000', name: 'Azka Shahid', color: '#E91E8C', label: 'JazzCash'  },
+  easypaisa: { number: '+92 319 3136574', name: 'Azka Shahid', color: '#4CAF50', label: 'EasyPaisa' },
 }
 
 const PAYMENT_METHODS = [
-  { id: 'cod',       label: 'Cash on Delivery', icon: '💵', desc: 'Pay when your order arrives' },
-  { id: 'easypaisa', label: 'EasyPaisa',        icon: '📱', desc: 'Send to our EasyPaisa account' },
-  { id: 'jazzcash',  label: 'JazzCash',         icon: '📲', desc: 'Send to our JazzCash account'  },
+  { id: 'easypaisa', label: 'EasyPaisa', icon: '📱', desc: 'Send to our EasyPaisa account' },
 ]
 
 export default function Checkout() {
@@ -32,7 +29,7 @@ export default function Checkout() {
   const [placing, setPlacing]     = useState(false)
   const [error, setError]         = useState('')
   const [order, setOrder]         = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [paymentMethod, setPaymentMethod] = useState('easypaisa')
   const [screenshot, setScreenshot]       = useState(null)
   const [screenshotPreview, setScreenshotPreview] = useState('')
   const fileRef = useRef()
@@ -91,7 +88,7 @@ export default function Checkout() {
     if (!/^[0-9]{10,11}$/.test(phone.replace(/\s|-/g, ''))) {
       setError('Please enter a valid phone number (10-11 digits).'); return false
     }
-    if ((paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash') && !screenshot) {
+    if (!screenshot) {
       setError('Please upload your payment screenshot.'); return false
     }
     setError(''); return true
@@ -126,7 +123,7 @@ export default function Checkout() {
 
   // ── SUCCESS PAGE ─────────────────────────────────────────────
   if (step === 2 && order) {
-    const isDigital = order.paymentMethod === 'easypaisa' || order.paymentMethod === 'jazzcash'
+    const isDigital = true
     return (
       <main style={s.successPage}>
         <div style={s.successBg} />
@@ -161,8 +158,7 @@ export default function Checkout() {
             <div style={s.orderBoxRow}>
               <span style={s.orderBoxLabel}>Payment</span>
               <span style={s.orderBoxValue}>
-                {order.paymentMethod === 'cod' ? 'Cash on Delivery' :
-                 order.paymentMethod === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'}
+                EasyPaisa
                 {isDigital && <span style={{ color: '#E8C87A', marginLeft: 8, fontSize: 11 }}>⏳ Pending Verification</span>}
               </span>
             </div>
@@ -198,17 +194,17 @@ export default function Checkout() {
   }
 
   const account = PAYMENT_ACCOUNTS[paymentMethod]
-  const needsScreenshot = paymentMethod === 'easypaisa' || paymentMethod === 'jazzcash'
+  const needsScreenshot = true
 
   // ── CHECKOUT FORM ────────────────────────────────────────────
   return (
     <main style={s.page}>
-      <header style={s.header}>
+      <header className="co-header" style={s.header}>
         <Link to="/" style={s.headerLogo}>
           <span style={s.headerLogoText}>AEVUM</span>
           <span style={s.headerLogoSub}>By Azka Shahid</span>
         </Link>
-        <div style={s.steps}>
+        <div className="co-steps" style={s.steps}>
           {['Shipping', 'Review', 'Confirm'].map((label, i) => (
             <div key={label} style={s.stepWrap}>
               <div style={{ ...s.stepNum, ...(i <= step ? s.stepNumActive : {}) }}>
@@ -222,17 +218,17 @@ export default function Checkout() {
         <Link to="/cart" style={s.backLink}>← Back to Cart</Link>
       </header>
 
-      <div style={s.layout}>
+      <div className="co-layout" style={s.layout}>
         <div style={s.left}>
           {error && <div style={s.errorBox}>{error}</div>}
 
           {/* STEP 0: Shipping + Payment */}
           {step === 0 && (
-            <div style={s.card}>
+            <div className="co-card" style={s.card}>
               <h2 style={s.cardTitle}>Shipping Details</h2>
               <p style={s.cardSub}>Where should we deliver your order?</p>
 
-              <div style={s.formGrid}>
+              <div className="co-formgrid" style={s.formGrid}>
                 <Field label="Full Name *"      name="fullName"   value={form.fullName}   onChange={handleChange} placeholder="As on ID" span />
                 <Field label="Email Address *"  name="email"      value={form.email}      onChange={handleChange} placeholder="for order updates" type="email" span />
                 <Field label="Phone Number *"   name="phone"      value={form.phone}      onChange={handleChange} placeholder="03xx-xxxxxxx" type="tel" />
@@ -275,12 +271,12 @@ export default function Checkout() {
                   ))}
                 </div>
 
-                {/* EasyPaisa / JazzCash instructions */}
+                {/* EasyPaisa instructions */}
                 {needsScreenshot && (
                   <div style={s.paymentInstructions}>
                     <div style={{ ...s.accountBox, borderColor: account.color + '40' }}>
                       <div style={{ ...s.accountIcon, background: account.color }}>
-                        {paymentMethod === 'easypaisa' ? '📱' : '📲'}
+                        📱
                       </div>
                       <div>
                         <p style={s.accountLabel}>{account.label} Account</p>
@@ -331,7 +327,7 @@ export default function Checkout() {
 
           {/* STEP 1: Review */}
           {step === 1 && (
-            <div style={s.card}>
+            <div className="co-card" style={s.card}>
               <h2 style={s.cardTitle}>Review Your Order</h2>
               <p style={s.cardSub}>Please confirm everything looks correct</p>
 
@@ -348,17 +344,8 @@ export default function Checkout() {
               {/* Payment summary */}
               <div style={s.reviewBlock}>
                 <span style={s.reviewLabel}>Payment Method</span>
-                {paymentMethod === 'cod' ? (
-                  <div style={s.codBox}>
-                    <span style={{ fontSize: 28 }}>💵</span>
-                    <div>
-                      <p style={s.codTitle}>Cash on Delivery</p>
-                      <p style={s.codSub}>Pay when your order arrives at your door.</p>
-                    </div>
-                  </div>
-                ) : (
                   <div style={{ ...s.codBox, borderColor: PAYMENT_ACCOUNTS[paymentMethod].color + '40' }}>
-                    <span style={{ fontSize: 28 }}>{paymentMethod === 'easypaisa' ? '📱' : '📲'}</span>
+                    <span style={{ fontSize: 28 }}>📱</span>
                     <div style={{ flex: 1 }}>
                       <p style={s.codTitle}>{PAYMENT_ACCOUNTS[paymentMethod].label}</p>
                       <p style={s.codSub}>Payment sent to {PAYMENT_ACCOUNTS[paymentMethod].number}</p>
@@ -367,7 +354,6 @@ export default function Checkout() {
                       <img src={screenshotPreview} alt="screenshot" style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }} />
                     )}
                   </div>
-                )}
               </div>
 
               <div style={s.reviewBlock}>
@@ -394,7 +380,7 @@ export default function Checkout() {
 
         {/* ── RIGHT: Summary ── */}
         <div style={s.right}>
-          <div style={s.summaryCard}>
+          <div className="co-summary" style={s.summaryCard}>
             <h3 style={s.summaryTitle}>Order Summary</h3>
             {cartItems.map(item => (
               <div key={`${item._id}-${item.size}`} style={s.summaryItem}>
@@ -426,11 +412,7 @@ export default function Checkout() {
             </div>
             <div style={s.codNotice}>
               <p style={s.codNoticeText}>
-                {paymentMethod === 'cod'
-                  ? '💵 Cash on Delivery — pay when your order arrives.'
-                  : paymentMethod === 'easypaisa'
-                  ? '📱 EasyPaisa — send payment & upload screenshot.'
-                  : '📲 JazzCash — send payment & upload screenshot.'}
+                📱 EasyPaisa — send payment & upload screenshot.
               </p>
             </div>
           </div>

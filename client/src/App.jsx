@@ -1,11 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
 
-import { AuthProvider } from './context/AuthContext'
-import { CartProvider } from './context/CartContext'
-
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
+import ProtectedRoute from './components/ProtectedRoute'
 
 import Home from './pages/Home'
 import Products from './pages/Products'
@@ -44,9 +42,7 @@ function PublicLayout({ children }) {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-
+    <>
         {/* AUTO SCROLL TO TOP */}
         <ScrollToTop />
 
@@ -128,7 +124,7 @@ export default function App() {
               ADMIN ROUTES
           ───────────────────── */}
 
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<ProtectedRoute adminOnly><AdminLayout /></ProtectedRoute>}>
 
             <Route
               index
@@ -158,7 +154,6 @@ export default function App() {
           </Route>
 
         </Routes>
-      </CartProvider>
-    </AuthProvider>
+    </>
   )
 }

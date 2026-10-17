@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../../context/AuthContext'
 import { Link } from 'react-router-dom'
+import { API } from '../../api'
 
-const API = 'http://localhost:5000/api'
 
 const STATUS_COLORS = {
   pending:    { bg: 'rgba(201,169,110,0.12)', color: '#C9A96E' },
@@ -51,12 +51,12 @@ export default function AdminDashboard() {
     <div>
       <div style={{ marginBottom: 40 }}>
         <p style={s.eyebrow}>AEVUM · Admin</p>
-        <h1 style={s.pageTitle}>Dashboard</h1>
+        <h1 className="adm-title" style={s.pageTitle}>Dashboard</h1>
         <p style={s.pageSub}>Welcome back — here's what's happening.</p>
       </div>
 
       {/* Stat Cards */}
-      <div style={s.grid4}>
+      <div className="adm-grid4" style={s.grid4}>
         {statCards.map(card => (
           <div key={card.label} style={s.statCard}>
             <div style={{ ...s.statIcon, color: card.accent, borderColor: card.accent + '30' }}>
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
       {/* Low Stock Alerts */}
       {lowStock.length > 0 && (
         <div style={s.alertBox}>
-          <div style={s.alertHead}>
+          <div className="adm-alerthead" style={s.alertHead}>
             <span style={s.alertIcon}>⚠</span>
             <div>
               <p style={s.alertTitle}>Low Stock Alert</p>
@@ -103,8 +103,8 @@ export default function AdminDashboard() {
           <h2 style={s.sectionTitle}>Recent Orders</h2>
           <Link to="/admin/orders" style={s.seeAll}>See all →</Link>
         </div>
-        <div style={s.table}>
-          <div style={{ ...s.tableRow, ...s.tableHeader }}>
+        <div className="adm-table" style={s.table}>
+          <div className="adm-head" style={{ ...s.tableRow, ...s.tableHeader }}>
             <span>Order ID</span><span>Customer</span><span>Total</span>
             <span>Date</span><span>Status</span>
           </div>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
           {orders.map(order => {
             const sc = STATUS_COLORS[order.status] || STATUS_COLORS.pending
             return (
-              <div key={order._id} style={s.tableRow}>
+              <div key={order._id} className="adm-row adm-r-dash" style={s.tableRow}>
                 <span style={s.orderId}>#{order._id.slice(-6).toUpperCase()}</span>
                 <span style={s.cell}>{order.user?.name || '—'}</span>
                 <span style={s.cell}>PKR {order.total.toLocaleString()}</span>

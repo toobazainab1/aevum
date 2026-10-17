@@ -3,10 +3,18 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
-# Environment Variables
+# Environment variables / secrets
 .env
+.env.*
+!.env.example
 client/.env
 server/.env
+*.pem
+*.key
+
+# Customer uploads (payment screenshots contain personal data)
+server/uploads/
+uploads/
 
 # Build files
 dist/
@@ -16,5 +24,7 @@ client/dist/
 # Logs
 *.log
 
-# MacOS
+# OS / editor
 .DS_Store
+**/.DS_Store
+__MACOSX/

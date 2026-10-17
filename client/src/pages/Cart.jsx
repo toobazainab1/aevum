@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import styles from '../styles/Cart.module.css'
+import { getProductImages } from '../utils/perfumeImages'
 
 export default function Cart() {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart()
@@ -37,12 +38,16 @@ export default function Cart() {
           {cartItems.map(item => (
             <div key={`${item._id}-${item.size}`} className={styles.item}>
               <div className={styles.itemVisual} style={{ background: item.bg || 'linear-gradient(160deg, #1a2a1a, #3d5c30)' }}>
+                {getProductImages(item.name)[0] ? (
+                  <img src={getProductImages(item.name)[0]} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
                 <svg viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 60 }}>
                   <rect x="46" y="28" width="28" height="14" fill="#C9A96E" rx="1"/>
                   <rect x="50" y="42" width="20" height="14" fill={item.bottleColor || '#3d5c30'} opacity="0.95"/>
                   <rect x="34" y="56" width="52" height="90" rx="4" fill={item.bottleColor || '#3d5c30'} opacity="0.95"/>
                   <rect x="38" y="61" width="4" height="80" rx="2" fill="rgba(255,255,255,0.05)"/>
                 </svg>
+                )}
               </div>
               <div className={styles.itemInfo}>
                 <h3 className={styles.itemName}>{item.name}</h3>
